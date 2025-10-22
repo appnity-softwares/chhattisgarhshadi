@@ -4,8 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MainStackParamList, MainTabParamList } from './types';
 import { colors } from '../theme/colors';
-import ComponentsDemoScreen from '../screens/demo/ComponentsDemoScreen';
-
+import { HomeScreen } from '../screens/main'; // ✅ Import real HomeScreen
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -19,7 +18,7 @@ const PlaceholderScreen = ({ title }: { title: string }) => (
   </View>
 );
 
-const HomeScreen = ComponentsDemoScreen;
+// Use real HomeScreen, keep others as placeholders
 const DiscoverScreen = () => <PlaceholderScreen title="Discover Screen" />;
 const MatchesScreen = () => <PlaceholderScreen title="Matches Screen" />;
 const ChatScreen = () => <PlaceholderScreen title="Chat Screen" />;
