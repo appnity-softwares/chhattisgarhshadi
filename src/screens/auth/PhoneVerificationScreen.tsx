@@ -12,7 +12,19 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+// ADDED navigation imports
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// Assuming the path to your navigation types is correct:
+import { AuthStackParamList } from '../../navigation/types'; 
+
 import { colors } from '../../theme/colors';
+
+// ADDED type for navigation prop
+type PhoneVerificationScreenNavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'PhoneVerification'
+>;
 
 interface CountryCode {
   code: string;
@@ -31,15 +43,11 @@ const countryCodes: CountryCode[] = [
   { code: 'SG', name: 'Singapore', dial_code: '+65', flag: '🇸🇬' },
 ];
 
-interface PhoneVerificationScreenProps {
-  onVerifyPhone: (phone: string, countryCode: string) => void;
-  onBack: () => void;
-}
-
-const PhoneVerificationScreen: React.FC<PhoneVerificationScreenProps> = ({
-  onVerifyPhone,
-  onBack,
-}) => {
+// REMOVED old interface PhoneVerificationScreenProps
+// UPDATED component to use navigation hook
+const PhoneVerificationScreen = () => {
+  // ADDED navigation hook
+  const navigation = useNavigation<PhoneVerificationScreenNavigationProp>();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
     countryCodes[0]
@@ -101,7 +109,11 @@ const PhoneVerificationScreen: React.FC<PhoneVerificationScreenProps> = ({
     // Mock API call
     setTimeout(() => {
       setLoading(false);
-      onVerifyPhone(phoneNumber, selectedCountry.dial_code);
+      // UPDATED to use navigation.navigate
+      navigation.navigate('OtpVerification', {
+        phoneNumber: phoneNumber,
+        countryCode: selectedCountry.dial_code,
+      });
     }, 1500);
   };
 
@@ -139,7 +151,8 @@ const PhoneVerificationScreen: React.FC<PhoneVerificationScreenProps> = ({
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
         {/* Back Button */}
-        <TouchableOpacity style={styles.backButton} onPress={onBack}>
+        {/* UPDATED onPress to use navigation.goBack() */}
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
 

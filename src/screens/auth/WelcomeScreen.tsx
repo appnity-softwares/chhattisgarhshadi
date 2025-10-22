@@ -8,19 +8,28 @@ import {
   Dimensions,
   ScrollView,
 } from 'react-native';
+// ADDED navigation imports
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// Assuming the path to your navigation types is correct:
+import { AuthStackParamList } from '../../navigation/types'; 
+
 import { colors } from '../../theme/colors';
 
 const { width, height } = Dimensions.get('window');
 
-interface WelcomeScreenProps {
-  onSignIn: () => void;
-  onCreateAccount: () => void;
-}
+// ADDED type for navigation prop
+type WelcomeScreenNavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'Welcome'
+>;
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
-  onSignIn,
-  onCreateAccount,
-}) => {
+// REMOVED old interface WelcomeScreenProps
+// UPDATED component to use navigation hook
+const WelcomeScreen = () => {
+    // ADDED navigation hook
+    const navigation = useNavigation<WelcomeScreenNavigationProp>();
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -110,7 +119,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             {/* Create Account Button (Primary) */}
             <TouchableOpacity
               style={styles.primaryButton}
-              onPress={onCreateAccount}
+              // UPDATED onPress to use navigation
+              onPress={() => navigation.navigate('GoogleAuth')}
               activeOpacity={0.8}>
               <Text style={styles.primaryButtonText}>Create Account</Text>
               <Text style={styles.primaryButtonTextHindi}>खाता बनाएं</Text>
@@ -119,7 +129,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             {/* Sign In Button (Outline) */}
             <TouchableOpacity
               style={styles.outlineButton}
-              onPress={onSignIn}
+              // UPDATED onPress to use navigation
+              onPress={() => navigation.navigate('GoogleAuth')} // Assuming 'GoogleAuth' is the sign-in/auth screen
               activeOpacity={0.8}>
               <Text style={styles.outlineButtonText}>Sign In</Text>
               <Text style={styles.outlineButtonTextHindi}>साइन इन करें</Text>

@@ -8,26 +8,35 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
+// ADDED navigation imports
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// Assuming the path to your navigation types is correct:
+import { AuthStackParamList } from '../../navigation/types';
+
 import { colors } from '../../theme/colors';
 
-interface GoogleAuthScreenProps {
-  onAuthSuccess: () => void;
-  onBack: () => void;
-}
+// ADDED type for navigation prop
+type GoogleAuthScreenNavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'GoogleAuth'
+>;
 
-const GoogleAuthScreen: React.FC<GoogleAuthScreenProps> = ({
-  onAuthSuccess,
-  onBack,
-}) => {
+// REMOVED old interface GoogleAuthScreenProps
+// UPDATED component to use navigation hook
+const GoogleAuthScreen = () => {
+  // ADDED navigation hook
+  const navigation = useNavigation<GoogleAuthScreenNavigationProp>();
   const [loading, setLoading] = useState(false);
 
   const handleGoogleSignIn = () => {
     setLoading(true);
-    
+
     // Mock authentication - simulate 2 seconds delay
     setTimeout(() => {
       setLoading(false);
-      onAuthSuccess();
+      // UPDATED to use navigation.navigate
+      navigation.navigate('PhoneVerification'); 
     }, 2000);
   };
 
@@ -39,7 +48,8 @@ const GoogleAuthScreen: React.FC<GoogleAuthScreenProps> = ({
       />
 
       {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={onBack}>
+      {/* UPDATED onPress to use navigation.goBack() */}
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backIcon}>←</Text>
       </TouchableOpacity>
 
@@ -97,7 +107,8 @@ const GoogleAuthScreen: React.FC<GoogleAuthScreenProps> = ({
         {/* Phone Sign In Button */}
         <TouchableOpacity
           style={styles.phoneButton}
-          onPress={() => {}}
+          // UPDATED onPress to use navigation.navigate
+          onPress={() => navigation.navigate('PhoneVerification')}
           activeOpacity={0.8}>
           <Text style={styles.phoneIcon}>📱</Text>
           <View style={styles.phoneButtonTextContainer}>

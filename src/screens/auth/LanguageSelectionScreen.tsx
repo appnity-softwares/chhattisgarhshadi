@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,8 +7,21 @@ import {
   TouchableOpacity,
   ScrollView,
   Animated,
+  Alert, // Added Alert for temporary navigation handler
 } from 'react-native';
+// ADDED navigation imports
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// Assuming the path to your navigation types is correct:
+import { AuthStackParamList } from '../../navigation/types'; 
+
 import { colors } from '../../theme/colors';
+
+// ADDED type for navigation prop
+type LanguageSelectionScreenNavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'LanguageSelection'
+>;
 
 interface Language {
   code: string;
@@ -42,15 +55,11 @@ const languages: Language[] = [
   },
 ];
 
-interface LanguageSelectionScreenProps {
-  onLanguageSelect: (languageCode: string) => void;
-  onSkip?: () => void;
-}
-
-const LanguageSelectionScreen: React.FC<LanguageSelectionScreenProps> = ({
-  onLanguageSelect,
-  onSkip,
-}) => {
+// REMOVED old interface LanguageSelectionScreenProps
+// UPDATED component to use navigation hook
+const LanguageSelectionScreen = () => {
+  // ADDED navigation hook
+  const navigation = useNavigation<LanguageSelectionScreenNavigationProp>();
   const [selectedLanguage, setSelectedLanguage] = useState<string>('en');
   const [scaleAnims] = useState(
     languages.map(() => new Animated.Value(1))
@@ -75,7 +84,22 @@ const LanguageSelectionScreen: React.FC<LanguageSelectionScreenProps> = ({
   };
 
   const handleContinue = () => {
-    onLanguageSelect(selectedLanguage);
+    // In a real app, you would save the language preference here
+    console.log('Language Selected:', selectedLanguage);
+
+    // --- TEMPORARY NAVIGATION/ALERT ---
+    // Replace the alert below with your actual navigation once the Main stack is set up, e.g.:
+    // navigation.replace('MainAppStack'); 
+    Alert.alert(
+        'Language Selected', 
+        `You chose: ${selectedLanguage}\n\nNavigation to the next step (e.g., Profile Creation or Main App) is coming soon!`,
+        [{ text: 'OK' }]
+    );
+    // ------------------------------------
+  };
+
+  const handleSkip = () => {
+    handleContinue();
   };
 
   return (
@@ -89,11 +113,10 @@ const LanguageSelectionScreen: React.FC<LanguageSelectionScreenProps> = ({
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
         {/* Skip Button */}
-        {onSkip && (
-          <TouchableOpacity style={styles.skipButton} onPress={onSkip}>
-            <Text style={styles.skipText}>Skip</Text>
-          </TouchableOpacity>
-        )}
+        {/* UPDATED onPress to use handleSkip */}
+        <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+          <Text style={styles.skipText}>Skip</Text>
+        </TouchableOpacity>
 
         {/* Header */}
         <View style={styles.header}>

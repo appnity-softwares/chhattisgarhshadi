@@ -9,9 +9,21 @@ import {
   StatusBar,
   Animated,
 } from 'react-native';
+// ADDED navigation imports
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// Assuming the path to your navigation types is correct:
+import { AuthStackParamList } from '../../navigation/types'; 
+
 import { colors } from '../../theme/colors';
 
 const { width, height } = Dimensions.get('window');
+
+// ADDED type for navigation prop
+type OnboardingScreenNavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'Onboarding'
+>;
 
 interface OnboardingSlide {
   id: string;
@@ -61,11 +73,10 @@ const slides: OnboardingSlide[] = [
   },
 ];
 
-interface OnboardingScreenProps {
-  onComplete: () => void;
-}
-
-const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
+// REMOVED old interface OnboardingScreenProps
+// UPDATED component to use navigation hook
+const OnboardingScreen = () => {
+  const navigation = useNavigation<OnboardingScreenNavigationProp>(); // ADDED navigation hook
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const slidesRef = useRef<FlatList>(null);
@@ -78,11 +89,12 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
 
   const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
 
+  // UPDATED scrollTo to use navigation.replace('Welcome')
   const scrollTo = () => {
     if (currentIndex < slides.length - 1) {
       slidesRef.current?.scrollToIndex({ index: currentIndex + 1 });
     } else {
-      onComplete();
+      navigation.replace('Welcome'); // Navigate to 'Welcome' screen
     }
   };
 
@@ -159,7 +171,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
 
       {/* Skip Button */}
       {currentIndex < slides.length - 1 && (
-        <TouchableOpacity style={styles.skipButton} onPress={onComplete}>
+        <TouchableOpacity style={styles.skipButton} onPress={() => navigation.replace('Welcome')}> 
           <Text style={styles.skipText}>Skip</Text>
         </TouchableOpacity>
       )}
