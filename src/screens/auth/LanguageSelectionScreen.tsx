@@ -1,27 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  StatusBar,
-  TouchableOpacity,
   ScrollView,
+  TouchableOpacity,
   Animated,
-  Alert, // Added Alert for temporary navigation handler
+  StatusBar,
 } from 'react-native';
-// ADDED navigation imports
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-// Assuming the path to your navigation types is correct:
-import { AuthStackParamList } from '../../navigation/types'; 
-
 import { colors } from '../../theme/colors';
-
-// ADDED type for navigation prop
-type LanguageSelectionScreenNavigationProp = NativeStackNavigationProp<
-  AuthStackParamList,
-  'LanguageSelection'
->;
 
 interface Language {
   code: string;
@@ -55,11 +42,13 @@ const languages: Language[] = [
   },
 ];
 
-// REMOVED old interface LanguageSelectionScreenProps
-// UPDATED component to use navigation hook
-const LanguageSelectionScreen = () => {
-  // ADDED navigation hook
-  const navigation = useNavigation<LanguageSelectionScreenNavigationProp>();
+interface LanguageSelectionScreenProps {
+  onComplete: () => void;
+}
+
+const LanguageSelectionScreen: React.FC<LanguageSelectionScreenProps> = ({
+  onComplete,
+}) => {
   const [selectedLanguage, setSelectedLanguage] = useState<string>('en');
   const [scaleAnims] = useState(
     languages.map(() => new Animated.Value(1))
@@ -84,22 +73,19 @@ const LanguageSelectionScreen = () => {
   };
 
   const handleContinue = () => {
-    // In a real app, you would save the language preference here
+    // Save language preference (in real app, save to AsyncStorage/Redux)
     console.log('Language Selected:', selectedLanguage);
-
-    // --- TEMPORARY NAVIGATION/ALERT ---
-    // Replace the alert below with your actual navigation once the Main stack is set up, e.g.:
-    // navigation.replace('MainAppStack'); 
-    Alert.alert(
-        'Language Selected', 
-        `You chose: ${selectedLanguage}\n\nNavigation to the next step (e.g., Profile Creation or Main App) is coming soon!`,
-        [{ text: 'OK' }]
-    );
-    // ------------------------------------
+    
+    // Call the onComplete callback to navigate to Profile
+    onComplete();
   };
 
   const handleSkip = () => {
-    handleContinue();
+    // Default to English and navigate to Profile Creation
+    console.log('Language Selection Skipped - Default: en');
+    
+    // Call the onComplete callback to navigate to Profile
+    onComplete();
   };
 
   return (
@@ -113,7 +99,6 @@ const LanguageSelectionScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
         {/* Skip Button */}
-        {/* UPDATED onPress to use handleSkip */}
         <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
           <Text style={styles.skipText}>Skip</Text>
         </TouchableOpacity>
