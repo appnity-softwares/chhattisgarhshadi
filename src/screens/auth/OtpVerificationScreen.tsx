@@ -10,23 +10,36 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+// ADDED navigation imports
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// Assuming the path to your navigation types is correct:
+import { AuthStackParamList } from '../../navigation/types'; 
+
 import { colors } from '../../theme/colors';
 
-interface OtpVerificationScreenProps {
-  phoneNumber: string;
-  countryCode: string;
-  onVerifySuccess: () => void;
-  onBack: () => void;
-  onResendOtp: () => void;
-}
+// ADDED type for navigation prop
+type OtpVerificationScreenNavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'OtpVerification'
+>;
 
-const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
-  phoneNumber,
-  countryCode,
-  onVerifySuccess,
-  onBack,
-  onResendOtp,
-}) => {
+// ADDED type for route prop
+type OtpVerificationScreenRouteProp = RouteProp<
+  AuthStackParamList,
+  'OtpVerification'
+>;
+
+// REMOVED old interface OtpVerificationScreenProps
+// UPDATED component to use navigation and route hooks
+const OtpVerificationScreen = () => {
+  // ADDED navigation and route hooks
+  const navigation = useNavigation<OtpVerificationScreenNavigationProp>();
+  const route = useRoute<OtpVerificationScreenRouteProp>();
+
+  // Destructuring parameters from route.params
+  const { phoneNumber, countryCode } = route.params; 
+
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -92,9 +105,8 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
     // Mock OTP verification (accept any 6-digit code)
     setTimeout(() => {
       setLoading(false);
-      // In real app, check if OTP is correct
-      // For demo, we'll accept any 6-digit code
-      onVerifySuccess();
+      // UPDATED to use navigation.navigate
+      navigation.navigate('LanguageSelection');
     }, 2000);
   };
 
@@ -106,11 +118,13 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
     setOtp(['', '', '', '', '', '']);
     setError('');
     inputRefs.current[0]?.focus();
-    onResendOtp();
+    // In a real app, you would call an API function here
+    // onResendOtp(); 
   };
 
   const handleEditNumber = () => {
-    onBack();
+    // UPDATED to use navigation.goBack()
+    navigation.goBack();
   };
 
   return (
@@ -126,7 +140,8 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
         {/* Back Button */}
-        <TouchableOpacity style={styles.backButton} onPress={onBack}>
+        {/* UPDATED onPress to use navigation.goBack() */}
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
 

@@ -6,13 +6,18 @@ import {
   Animated,
   StatusBar,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../navigation/types';
 import { colors } from '../../theme/colors';
 
-interface SplashScreenProps {
-  onAnimationComplete: () => void;
-}
+type SplashScreenNavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'Splash'
+>;
 
-const SplashScreen: React.FC<SplashScreenProps> = ({ onAnimationComplete }) => {
+const SplashScreen = () => {
+  const navigation = useNavigation<SplashScreenNavigationProp>();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.3)).current;
 
@@ -34,11 +39,11 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onAnimationComplete }) => {
 
     // Navigate after 2.5 seconds
     const timer = setTimeout(() => {
-      onAnimationComplete();
+      navigation.replace('Onboarding');
     }, 2500);
 
     return () => clearTimeout(timer);
-  }, [fadeAnim, scaleAnim, onAnimationComplete]);
+  }, [fadeAnim, scaleAnim, navigation]);
 
   return (
     <View style={styles.container}>
@@ -47,7 +52,6 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onAnimationComplete }) => {
         barStyle="light-content"
       />
       
-      {/* Animated Logo Container */}
       <Animated.View
         style={[
           styles.logoContainer,
@@ -57,21 +61,17 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onAnimationComplete }) => {
           },
         ]}>
         
-        {/* Heart Icon (Logo) */}
         <View style={styles.heartContainer}>
           <Text style={styles.heartEmoji}>💕</Text>
         </View>
 
-        {/* App Name */}
         <Text style={styles.appNameEnglish}>ChhattisgarhShadi</Text>
         <Text style={styles.appNameHindi}>छत्तीसगढ़ शादी</Text>
         
-        {/* Tagline */}
         <Text style={styles.tagline}>Find Your Perfect Match</Text>
         <Text style={styles.taglineHindi}>अपना परफेक्ट साथी खोजें</Text>
       </Animated.View>
 
-      {/* Version */}
       <Text style={styles.version}>Version 1.0.0</Text>
     </View>
   );
@@ -96,14 +96,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 8,
   },
   heartEmoji: {
     fontSize: 60,
