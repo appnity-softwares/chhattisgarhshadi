@@ -3,12 +3,14 @@ import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 import SplashScreen from './src/screens/auth/SplashScreen';
 import OnboardingScreen from './src/screens/auth/OnboardingScreen';
 import WelcomeScreen from './src/screens/auth/WelcomeScreen';
+import GoogleAuthScreen from './src/screens/auth/GoogleAuthScreen';
 import { colors } from './src/theme/colors';
 
 function App(): React.JSX.Element {
   const [showSplash, setShowSplash] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [showGoogleAuth, setShowGoogleAuth] = useState(true);
 
   if (showSplash) {
     return (
@@ -25,14 +27,20 @@ function App(): React.JSX.Element {
   if (showWelcome) {
     return (
       <WelcomeScreen
-        onSignIn={() => {
-          console.log('Sign In pressed');
-          setShowWelcome(false);
+        onSignIn={() => setShowWelcome(false)}
+        onCreateAccount={() => setShowWelcome(false)}
+      />
+    );
+  }
+
+  if (showGoogleAuth) {
+    return (
+      <GoogleAuthScreen
+        onAuthSuccess={() => {
+          console.log('Google Auth Success!');
+          setShowGoogleAuth(false);
         }}
-        onCreateAccount={() => {
-          console.log('Create Account pressed');
-          setShowWelcome(false);
-        }}
+        onBack={() => setShowWelcome(true)}
       />
     );
   }
@@ -43,7 +51,10 @@ function App(): React.JSX.Element {
         <Text style={styles.text}>✅ Screen 1: Splash Complete!</Text>
         <Text style={styles.text}>✅ Screen 2: Onboarding Complete!</Text>
         <Text style={styles.text}>✅ Screen 3: Welcome Complete!</Text>
-        <Text style={styles.subText}>Ready for Screen 4: Google Auth Screen</Text>
+        <Text style={styles.text}>✅ Screen 4: Google Auth Complete!</Text>
+        <Text style={styles.subText}>
+          Ready for Screen 5: Phone Verification Screen
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -61,11 +72,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   text: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: colors.text.primary,
     textAlign: 'center',
-    marginVertical: 5,
+    marginVertical: 4,
   },
   subText: {
     fontSize: 16,
