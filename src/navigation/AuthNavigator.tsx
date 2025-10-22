@@ -13,7 +13,11 @@ import LanguageSelectionScreen from '../screens/auth/LanguageSelectionScreen';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
-const AuthNavigator = () => {
+interface AuthNavigatorProps {
+  onAuthComplete: () => void;
+}
+
+const AuthNavigator: React.FC<AuthNavigatorProps> = ({ onAuthComplete }) => {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -28,7 +32,9 @@ const AuthNavigator = () => {
       <Stack.Screen name="GoogleAuth" component={GoogleAuthScreen} />
       <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen} />
       <Stack.Screen name="OtpVerification" component={OtpVerificationScreen} />
-      <Stack.Screen name="LanguageSelection" component={LanguageSelectionScreen} />
+      <Stack.Screen name="LanguageSelection">
+        {(props) => <LanguageSelectionScreen {...props} onComplete={onAuthComplete} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };
